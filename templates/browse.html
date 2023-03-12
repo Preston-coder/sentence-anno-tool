@@ -1,0 +1,88 @@
+$def with (resp)
+
+
+$def search_form(resp):
+    <form id="search_form"  method="post" action="browse">
+    <input placeholder="image id"  type="text" id="input_query" name="query" class="focus" /> <input id="go" name="go" type="submit" value="查询" />
+    </form>
+
+
+
+$def result_to_table(resp, row_num=20):
+    <table style="margin:auto; width:80%; "  cellspacing="1px" cellpadding="10px">
+    $ reslist = resp['results']
+    $ col_num = 4
+    $ index = 0
+    $for i in range(row_num):
+        <tr>
+        $for j in range(col_num):
+            $ index = i*col_num + j
+            $if index>=len(reslist): 
+                $break
+            $ item = reslist[index]
+            $ img_id = item['video_id']
+            $ safe_img_id = img_id.replace('#', '%23')
+            $ page_id=index+1
+            <td style="vertical-align:top; text-align:center;">
+                <br><font color="gray">$img_id</font>
+                <br><small>$item['date']</small>
+                <div class="title">
+                <small>$item['cn_caption']</small>
+                <br><small><font color="purple">$item['en_caption']</font></small> 
+                <br><small><font color="blue">是否流利: $item['flag']</font></small>
+                <br><small><font color="darkblue">是否标注: $item['ischeck']</font></small>
+                <br>
+                <a href="/dolabel?page=$page_id">修改</a>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+
+$def generate_page_links(resp):
+    $ nr_of_pages = resp['nr_of_pages']
+    $if nr_of_pages > 1:
+        $for page in range(1, nr_of_pages + 1):
+            $if page == resp['page']:
+                $page 
+            $else:
+                <a href="/browse?page=$page">$page</a>
+            &nbsp; 
+
+
+<html>
+<head>
+<link rel="stylesheet" href="/static/basic.css" type="text/css" media="screen" charset="utf-8"/>
+<script type="text/javascript" src="/static/jquery.js"></script>
+
+<script type="text/javascript">
+
+jQuery(document).ready(function(){
+    jQuery('#search_form').submit(function(e){
+        var input = jQuery.trim( jQuery('#input_query').val() );
+        if (!input) {
+            e.preventDefault();
+        }
+        else {
+            jQuery('#input_query').val(input)
+        }
+    });
+});
+
+</script>
+    
+</head>
+
+<body>
+
+
+<h3 style="text-align:left;"><a href="/dolabel">继续标注</a> | <a href="/browse">查看结果</a> </h3>
+<!--$:search_form(resp)-->
+<h3 style="color:black; background-color:Lavender;">当前用户: $resp['user_id']，$resp['todo'] 个句子已处理 </h3> 
+$:generate_page_links(resp)
+$:result_to_table(resp)
+
+$if resp['pagesize']>50:
+    $:generate_page_links(resp)
+
+</body>

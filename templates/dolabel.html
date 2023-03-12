@@ -1,0 +1,138 @@
+$def with (resp,pages)
+
+$def generate_label_panel(resp):
+    $ video_id = resp['video_id']
+    $ page = pages.get_html()
+    <table style="margin:auto;" cellspacing="1px" cellpadding="10px">
+    <tr>
+        <td>
+            <div id="$video_id">
+               <h3>视频id: $video_id</h3>
+            </div>
+            <p>
+            $:search_form(resp)
+        </td>
+        
+    </tr>
+    <tr> <td><div>$:page</div></td> </tr>
+    </table>
+
+    
+$def search_form(resp):
+    $ cn_caption=resp['cn_caption']
+    $ en_caption=resp['en_caption']
+    <form id="search_form"  method="post" action="dolabel">
+    <div>
+        <br>
+        <h4>英文: $en_caption</h4>
+        
+        <h4>中文: $cn_caption</h4>
+    </div>
+    <div class="title">    
+        $if resp['flag']=='true':
+            <input id="true" type="radio" name="flag" value="true" checked>流利
+            <input id="false" type="radio" name="flag" value="false">不流利
+        $else:
+            <input id="true" type="radio" name="flag" value="true">流利
+            <input id="false" type="radio" name="flag" value="false" checked>不流利    
+    </div>
+    <p>
+    
+    <!--<input id="go" name="go" type="submit" value="提交" /> -->
+    <button name="keyword" type="submit" class="btn btn-primary">提交</button>
+    $if resp['ischeck']=='true': 
+        <span name="ischeck" type="button" class="btn btn-success" value="true">已标注</span>
+    $else:
+        <span name="ischeck" type="button" class="btn btn-info" value="false">未标注</span>
+    <input type="text" value="$resp['video_id']" name='video_id' readonly style="visibility: hidden">
+    <input type="text" value="$resp['cn_caption']" name='cn_caption' readonly style="visibility: hidden">
+    <input type="text" value="$resp['en_caption']" name='en_caption' readonly style="visibility: hidden">
+    </form>
+        
+
+<html>
+<head>
+<title>Manual translation</title>
+<!--<link href="css/bootstrap/3.3.6/bootstrap.min.css" rel="stylesheet">-->
+<script type="text/javascript" src="/static/jquery.js"></script>
+<link href="../static/min.css" rel="stylesheet">
+<script type="text/javascript">
+
+function is_valid_date(date) {
+    elems = date.split('-')
+    if (elems.length != 3) {
+        return false
+    } 
+    if (parseInt(elems[0])<1900) {
+        return false
+    }
+    if (parseInt(elems[1])<1 || parseInt(elems[1])>12) {
+        return false
+    }
+    if (parseInt(elems[2])<1 || parseInt(elems[2])>31) {
+        return false
+    }
+    return true
+}
+
+
+
+jQuery(document).ready(function(){
+    jQuery('#search_form').submit(function(e){
+        var name = jQuery.trim( jQuery('#input_').val() );
+        
+    });
+});
+
+jQuery(document).keyup(function(e){
+    //"button[name='keyword']"
+       
+        var eCode = e.keyCode ? e.keyCode : e.which ? e.which : e.charCode;
+        if (eCode == 13){
+            //alert("jsijdisjfi");
+            jQuery(":submit").click();
+            //自己写判断函数
+        }
+        else if (eCode == 65){
+            //a
+            jQuery("#true").click();
+        }
+        else if (eCode == 83){
+            //s
+            jQuery("#false").click();
+        }
+        else if (eCode == 37) {
+            //left
+            var prevpage=jQuery("ul.pagination li:eq(1) a").attr("href");
+            //alert(nextpage);
+            if (prevpage != undefined){
+                location = prevpage;
+            }
+            
+        }
+        else if (eCode == 39) {
+            //right
+            var nextpage=jQuery("ul.pagination li:eq(2) a").attr("href");
+            //alert(nextpage);
+            if (nextpage != undefined){
+                location = nextpage;
+            }
+            
+        }
+})
+
+</script>
+    
+</head>
+
+<body>
+
+<div class="page-header">
+<h3 style="text-align:center;"><a href="/browse">查看结果</a></h3>    
+</div>
+
+<h3 style="text-align:center; color:black; background-color:Lavender;">标注人员: $resp['user_id']，还有 $resp['todo'] 张图像待标注</h3>
+$if resp['todo']>0: 
+    $:generate_label_panel(resp)
+
+</body>
