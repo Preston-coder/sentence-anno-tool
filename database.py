@@ -86,14 +86,20 @@ def update(dbfile, tablename, video_id, info):
 
 if __name__ == "__main__":
     collection = 'test'
-    user = 'dongchengbo'
+    user = ''
     dbfile = "./jobs/%s-%s.sql" % (collection, user)
+    #dbfile = "/Users/wangziyuan/Desktop/jobs/test-dongchengbo.sql"
     tablename = user
 
     #create(dbfile, tablename)    
 
     record = read(dbfile, tablename)
     print (len(record))
+    count = 0
+    for item in record:
+        if item['flag'] == "unsure":
+            count += 1
+    print(count)
 
     #把txt里的导入
     '''with open("./id_en_cn.txt",'r') as tf:
@@ -109,7 +115,7 @@ if __name__ == "__main__":
         insert(dbfile,tablename,info)'''
     
     record = read(dbfile, tablename)
-    print (record[0:5])
+    print (record[0:20])
 
    
 

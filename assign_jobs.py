@@ -11,9 +11,11 @@ logging.basicConfig(
     datefmt='%d %b %H:%M:%S')
 logger.setLevel(logging.INFO)
 
-ROOT_PATH = "./id_en_cn.txt"
-DEFAULT_USERS = 'chenaozhu,chenxinru,dongchengbo,hufan,huruohan,linhailan,liujiazhen,tiankaibin,wangzihan,wangziyuan,wuyue,zhaoruixiang'
-LEN_AVG=20
+ROOT_PATH = "./id_cn_en_chunjiang.txt"
+#DEFAULT_USERS = 'chenaozhu,chenxinru,dongchengbo,hufan,huruohan,linhailan,liujiazhen,tiankaibin,wangzihan,lixirong,wuyue,zhaoruixiang'
+#DEFAULT_USERS='weiqijie,wangziyue'
+DEFAULT_USERS='chunjiang'
+LEN_AVG=500
 
 def add_to_db(infos, user_id, resfile):
     try:
@@ -28,13 +30,12 @@ def add_to_db(infos, user_id, resfile):
     
     inserted = 0
     for info in infos:
-    	try:
-    	    database.insert(resfile,user_id,info)
-    	    inserted += 1
-    	except:
-    		None
-
-    conn.commit()        
+        try:
+            database.insert(resfile,user_id,info)
+            inserted += 1
+        except:
+            print("fail")
+    conn.commit()
     c.close()
     conn.close()
 

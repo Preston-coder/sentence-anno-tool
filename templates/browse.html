@@ -27,12 +27,35 @@ $def result_to_table(resp, row_num=20):
                 <br><font color="gray">$img_id</font>
                 <br><small>$item['date']</small>
                 <div class="title">
-                <small>$item['cn_caption']</small>
-                <br><small><font color="purple">$item['en_caption']</font></small> 
-                <br><small><font color="blue">是否流利: $item['flag']</font></small>
-                <br><small><font color="darkblue">是否标注: $item['ischeck']</font></small>
+                $if item['ischeck'] == 'false':     
+                    <small><font color="gray">$item['cn_caption']</font></small>
+                    <br><small><font color="gray">$item['en_caption']</font></small> 
+                $else:
+                    $if item['flag'] == 'true':
+                        <small><font color="green">$item['cn_caption']</font></small>
+                        <br><small><font color="green">$item['en_caption']</font></small> 
+                    $elif item['flag'] == 'false':
+                        <small><font color="#dd0000">$item['cn_caption']</font></small>
+                        <br><small><font color="#dd0000">$item['en_caption']</font></small> 
+                    $else :
+                        <small><font color="#F4D03F">$item['cn_caption']</font></small>
+                        <br><small><font color="#F4D03F">$item['en_caption']</font></small>
+                
+                $if item['ischeck'] == 'false': 
+                    <br><small><font color="blue">是否流利: </font><font color="gray">$item['flag']</font></small>
+                $else:
+                    $if item['flag'] == 'true':
+                        <br><small><font color="blue">是否流利: </font><font color="green">$item['flag']</font></small>
+                    $elif item['flag'] == 'false':
+                        <br><small><font color="blue">是否流利: </font><font color="#dd0000">$item['flag']</font></small>
+                    $else :
+                        <br><small><font color="blue">是否流利: </font><font color="#F4D03F">$item['flag']</font></small>
+                $if item['ischeck'] == 'false': 
+                    <br><small><font color="darkblue">是否标注: </font><font color="gray">$item['ischeck']</font></small>
+                $else:
+                    <br><small><font color="darkblue">是否标注: $item['ischeck']</font></small>
                 <br>
-                <a href="/dolabel?page=$page_id">修改</a>
+                <a href="/dolabel?page=$page_id"><font color="#2E86C1">修改</font></a>
                 </div>
             </td>
         </tr>
@@ -75,10 +98,10 @@ jQuery(document).ready(function(){
 
 <body>
 
-
-<h3 style="text-align:left;"><a href="/dolabel">继续标注</a> | <a href="/browse">查看结果</a> </h3>
+$ dolabel_url = "/dolabel?page=%s" % (resp['last_notcheck'])
+<h3 style="text-align:left;"><a href=$dolabel_url>继续标注</a> | <a href="/browse">查看结果</a> </h3>
 <!--$:search_form(resp)-->
-<h3 style="color:black; background-color:Lavender;">当前用户: $resp['user_id']，$resp['todo'] 个句子已处理 </h3> 
+<h3 style="color:black; background-color:Lavender;">当前用户: $resp['user_id']，$resp['todo'] 个句子待处理 </h3> 
 $:generate_page_links(resp)
 $:result_to_table(resp)
 

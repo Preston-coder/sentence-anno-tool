@@ -27,18 +27,6 @@ class index:
     def GET(self):
         raise web.seeother('/dolabel')
 
-        input = web.input(query=None)
-        resp = {'status':0, 'hits':0, 'random':[], 'tagrel':[]}
-        resp['sent_id'] = '1000268201_693b08cb0e.jpg#0'
-        resp['user_id'] = 'xirong'
-        resp['eng'] = 'A black and white dog is running in a grassy garden surrounded by a white fence .'
-        resp['baidu'] = '一只黑白相间的狗在一个长满草的花园里奔跑，被一个白色的栅栏围了起来 一只黑白相间的狗'
-
-        if input.query:
-            resp['status'] = 1
-            resp['query'] = input.query
-
-        return render.index(resp)
 
 
 class dolabel:
@@ -60,8 +48,8 @@ class dolabel:
         resp = {'user_id':user_id, 'todo':todo}
         resp['video_id'] = cur_records[0]['video_id']
 
-        if todo:
-            resp.update(cur_records[0])
+        #if todo:
+        resp.update(cur_records[0])
             
         return render.dolabel(resp,pages)
 
@@ -103,11 +91,21 @@ class browse:
         #records.reverse()
         nr_hits = len(records)
         #print(nr_hits)
-        nr_of_pages = int(nr_hits / float(PAGE_SIZE) + 0.5)
+        nr_of_pages = round(nr_hits / float(PAGE_SIZE) + 0.5)
         start = (page-1) * PAGE_SIZE
         end = start + PAGE_SIZE 
+        
+        last_notcheck = 1
+        for item in records:
+            if item['ischeck'] == "false":
+                break
+            else:
+                last_notcheck += 1
+        if last_notcheck > len(records):
+            last_notcheck = len(records)
+        print(last_notcheck)
         todo = len([item for item in records if item['ischeck']=="false"])
-        resp = {'user_id':user_id, 'hits':nr_hits, 'todo':todo,'nr_of_pages':nr_of_pages, 'page':page, 'pagesize':PAGE_SIZE}
+        resp = {'user_id':user_id, 'hits':nr_hits, 'todo':todo,'nr_of_pages':nr_of_pages, 'page':page, 'pagesize':PAGE_SIZE,'last_notcheck':last_notcheck}
         resp['results'] = records[start:end]
         return render.browse(resp)
 

@@ -7,7 +7,12 @@ $def generate_label_panel(resp):
     <tr>
         <td>
             <div id="$video_id">
-               <h3>视频id: $video_id</h3>
+                $if resp['ischeck']=='true': 
+                    <h3><span name="ischeck"  class="label label-success" value="true">已标注</span> 视频id: $video_id</h3>
+                    
+                $else:
+                    <h3><span name="ischeck"  class="label label-info" value="false">未标注</span> 视频id: $video_id</h3>
+                
             </div>
             <p>
             $:search_form(resp)
@@ -32,18 +37,22 @@ $def search_form(resp):
         $if resp['flag']=='true':
             <input id="true" type="radio" name="flag" value="true" checked>流利
             <input id="false" type="radio" name="flag" value="false">不流利
+            <input id="unsure" type="radio" name="flag" value="unsure">不确定
+        $elif resp['flag']=='false':
+            <input id="true" type="radio" name="flag" value="true">流利
+            <input id="false" type="radio" name="flag" value="false" checked>不流利  
+            <input id="unsure" type="radio" name="flag" value="unsure">不确定
         $else:
             <input id="true" type="radio" name="flag" value="true">流利
-            <input id="false" type="radio" name="flag" value="false" checked>不流利    
+            <input id="false" type="radio" name="flag" value="false">不流利  
+            <input id="unsure" type="radio" name="flag" value="unsure" checked>不确定
+
     </div>
     <p>
     
     <!--<input id="go" name="go" type="submit" value="提交" /> -->
     <button name="keyword" type="submit" class="btn btn-primary">提交</button>
-    $if resp['ischeck']=='true': 
-        <span name="ischeck" type="button" class="btn btn-success" value="true">已标注</span>
-    $else:
-        <span name="ischeck" type="button" class="btn btn-info" value="false">未标注</span>
+    
     <input type="text" value="$resp['video_id']" name='video_id' readonly style="visibility: hidden">
     <input type="text" value="$resp['cn_caption']" name='cn_caption' readonly style="visibility: hidden">
     <input type="text" value="$resp['en_caption']" name='en_caption' readonly style="visibility: hidden">
@@ -101,6 +110,9 @@ jQuery(document).keyup(function(e){
             //s
             jQuery("#false").click();
         }
+        else if (eCode == 68){
+            jQuery("#unsure").click()
+        }
         else if (eCode == 37) {
             //left
             var prevpage=jQuery("ul.pagination li:eq(1) a").attr("href");
@@ -132,7 +144,7 @@ jQuery(document).keyup(function(e){
 </div>
 
 <h3 style="text-align:center; color:black; background-color:Lavender;">标注人员: $resp['user_id']，还有 $resp['todo'] 张图像待标注</h3>
-$if resp['todo']>0: 
+$if resp['todo']>=0: 
     $:generate_label_panel(resp)
 
 </body>
